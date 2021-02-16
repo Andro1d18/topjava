@@ -6,6 +6,8 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <hr>
+<h3><a href="meals">Meals</a></h3>
+<hr>
 <h2>Users</h2>
 </body>
 </html>
