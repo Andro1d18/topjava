@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.util;
 
 
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 public class ValidationUtil {
@@ -40,4 +41,22 @@ public class ValidationUtil {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }
+    public static Meal checkPermissionAndNotFound(Meal meal, int mealId, int userId) {
+
+//        if (meal != null && meal.getUserId() == userId)
+//            return meal;
+        if (meal != null && meal.getUserId() != userId)
+            throw new NotFoundException("Current user don't have permission for this meal.");
+        return checkNotFoundWithId(meal,mealId);
+    }
+
+    public static void checkPermission(Meal meal, int userId){
+        checkPermission(meal.getUserId(), userId);
+    }
+
+    public static void checkPermission(int mealId, int userId){
+        if (mealId != userId)
+            throw new NotFoundException("Current user don't have permission for this meal.");
+    }
+
 }
