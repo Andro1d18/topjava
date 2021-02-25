@@ -13,8 +13,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@ContextConfiguration("classpath:spring/spring-app.xml")
-@RunWith(SpringRunner.class)
+//@ContextConfiguration("classpath:spring/spring-app.xml")
+//@RunWith(SpringRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
@@ -28,13 +28,13 @@ public class InMemoryAdminRestControllerSpringTest {
         repository.init();
     }
 
-    @Test
+//    @Test
     public void delete() {
         controller.delete(USER_ID);
         Assert.assertNull(repository.get(USER_ID));
     }
 
-    @Test
+//    @Test
     public void deleteNotFound() {
         Assert.assertThrows(NotFoundException.class, () -> controller.delete(NOT_FOUND));
     }
