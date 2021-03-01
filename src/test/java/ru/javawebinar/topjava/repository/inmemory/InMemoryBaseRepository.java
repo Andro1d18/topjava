@@ -7,19 +7,25 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+
 public class InMemoryBaseRepository<T extends AbstractBaseEntity> {
 
-    private final AtomicInteger counter = new AtomicInteger(0);
+    static final AtomicInteger counter = new AtomicInteger(START_SEQ);
 
     final Map<Integer, T> map = new ConcurrentHashMap<>();
 
-    public T save(T entry) {
-        if (entry.isNew()) {
-            entry.setId(counter.incrementAndGet());
-            map.put(entry.getId(), entry);
-            return entry;
+    public T save(T entity) {
+        if (entity.isNew()) {
+            entity.setId(counter.getAndIncrement());
+            map.put(entity.getId(), entity);
+            return entity;
         }
-        return map.computeIfPresent(entry.getId(), (id, oldT) -> entry);
+        return map.computeIfPresent(entity.getId(), (id, oldT) -> entity);
+    }
+
+    void put(T entity) {
+        map.put(entity.getId(), entity);
     }
 
     public boolean delete(int id) {
@@ -33,4 +39,5 @@ public class InMemoryBaseRepository<T extends AbstractBaseEntity> {
     Collection<T> getCollection() {
         return map.values();
     }
+
 }

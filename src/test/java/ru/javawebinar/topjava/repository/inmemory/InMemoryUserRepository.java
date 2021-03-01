@@ -18,8 +18,9 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
 
     public void init() {
         map.clear();
-        map.put(UserTestData.USER_ID, UserTestData.user);
-        map.put(UserTestData.ADMIN_ID, UserTestData.admin);
+        put(user);
+        put(admin);
+        counter.getAndSet(UserTestData.ADMIN_ID + 1);
     }
 
     @Override
