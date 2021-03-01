@@ -24,12 +24,12 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 public class MealServlet extends HttpServlet {
 
     private ConfigurableApplicationContext springContext;
- //   @Qualifier("InMemoryMealRepository")
+
     private MealRestController mealController;
 
     @Override
     public void init() {
-        springContext = new ClassPathXmlApplicationContext("/spring/spring-app.xml");
+        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
         mealController = springContext.getBean(MealRestController.class);
     }
 
