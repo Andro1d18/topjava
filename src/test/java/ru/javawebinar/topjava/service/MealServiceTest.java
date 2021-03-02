@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,10 +27,6 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    static {
-        SLF4JBridgeHandler.install();
-    }
-
     @Autowired
     private MealService service;
 
@@ -54,7 +49,7 @@ public class MealServiceTest {
     @Test
     public void create() {
         Meal created = service.create(getNew(), USER_ID);
-        int newId = created.getId();
+        int newId = created.id();
         Meal newMeal = getNew();
         newMeal.setId(newId);
         assertMatch(created, newMeal);
