@@ -1,6 +1,10 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -15,6 +19,10 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -30,6 +38,39 @@ public class MealServiceTest {
 
     @Autowired
     private MealService service;
+
+    private static final Map<String, Long> resultTest = new HashMap<>();
+
+    @Rule
+    public  TestName testName = new TestName();
+
+    @Rule
+    public  ExternalResource externalResource = new ExternalResource() {
+        Date date;
+        @Override
+        protected void before() throws Throwable {
+            super.before();
+            date = new Date();
+        }
+
+        @Override
+        protected void after() {
+            super.after();
+            long timeRequired =  new Date().getTime() - date.getTime();
+            System.out.println("***************** \n time required for test: "+ timeRequired  + " \n*****************" );
+            resultTest.put(testName.getMethodName(), timeRequired);
+        }
+    };
+
+    @ClassRule
+    public static ExternalResource externalResourceClass = new ExternalResource() {
+        @Override
+        protected void after() {
+            super.after();
+            System.out.println("***************** \n Summary about all tests: " +
+                     resultTest + " \n*****************");
+        }
+    };
 
     @Test
     public void delete() {
