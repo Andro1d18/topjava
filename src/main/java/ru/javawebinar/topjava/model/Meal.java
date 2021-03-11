@@ -1,19 +1,41 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+       // @NamedQuery(name = Meal.DELETE, query = ""),
+        @NamedQuery(name = Meal.ALL, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC "),
+        @NamedQuery(name = Meal.GETBEETWENHALFOPEN, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= :startDateTime AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC"),
+})
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}
+    , name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
+
+
+    public static final String GETBEETWENHALFOPEN = "Meal.getBetweenHalfOpen";
+    public static final String ALL = "Meal.getAll";
+    //public static final String DELETE = "Meal.delete";
+    @Column(name = "date_time", nullable = false, columnDefinition = "timeStamp")
+    @NotNull
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false)
+    @NotBlank
     private String description;
 
+    @Column(name = "calories", nullable = false, columnDefinition = "INTEGER")
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+//    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "password")) ЗАКОНЧИЛ ЗДЕСЬ
+//    @JoinColumn(name = "user_id", foreignKey = "")
     private User user;
 
     public Meal() {
@@ -77,6 +99,7 @@ public class Meal extends AbstractBaseEntity {
                 ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
+             //   ", user_id=" + user +
                 '}';
     }
 }
