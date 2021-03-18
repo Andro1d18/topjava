@@ -58,18 +58,20 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        Specification<Meal> specification = new Specification<Meal>() {
-            @Override
-            public Predicate toPredicate(Root<Meal> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-
-                return criteriaBuilder.equal(root.get("user"), userId);
-            }
-        };
+        Specification<Meal> specification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("user"), userId);
         return crudRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "dateTime"));
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudRepository.findAll();
+        Specification<Meal> specification = (root, query, criteriaBuilder) -> {
+            Predicate[] predicates = new Predicate[3];
+            predicates[0] = criteriaBuilder.equal(root.get("user"), userId);
+            predicates[1] = criteriaBuilder.greaterThanOrEqualTo(root.get("dateTime"), startDateTime);
+            predicates[2] = criteriaBuilder.lessThan(root.get("dateTime"), endDateTime);
+            query.where(predicates);
+            return query.getRestriction();
+        };
+        return crudRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "dateTime"));
     }
 }
