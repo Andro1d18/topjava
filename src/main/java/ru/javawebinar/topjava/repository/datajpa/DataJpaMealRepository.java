@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
@@ -9,6 +10,10 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,7 +58,14 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudRepository.findAll(Sort.by(Sort.Direction.DESC, "dateTime"));
+        Specification<Meal> specification = new Specification<Meal>() {
+            @Override
+            public Predicate toPredicate(Root<Meal> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+
+                return criteriaBuilder.equal(root.get("user"), userId);
+            }
+        };
+        return crudRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "dateTime"));
     }
 
     @Override
